@@ -27,6 +27,10 @@ type Config struct {
 
 type Files map[string]string
 
+func NewFiles() Files {
+	return make(map[string]string)
+}
+
 func (f *Files) String() string {
 	return fmt.Sprintf("%#v", f)
 }
@@ -176,7 +180,7 @@ func main() {
 		srcZip := flag.String("srcZip", "", "")
 		dstZip := flag.String("dstZip", "", "")
 
-		var fs Files
+		fs := NewFiles()
 		flag.Var(&fs, "files", "需要替换的文件，格式：zip内路径|操作系统路径 。操作系统路径为空表示删除文件")
 
 		flag.Parse()
@@ -201,14 +205,14 @@ func main() {
 				panic(fmt.Errorf("格式化 dstDir 失败，%v", err))
 			}
 
-			nfs := make(map[string]string)
-			for i, v := range fs {
+			nfs := NewFiles()
+			for i, value := range fs {
 				ni, err := T(i).Format(v)
 				if err != nil {
 					panic(fmt.Errorf("格式化 %v 失败，%v", i, err))
 				}
 
-				nv, err := T(v).Format(v)
+				nv, err := T(value).Format(v)
 				if err != nil {
 					panic(fmt.Errorf("格式化 %v 失败，%v", v, err))
 				}
@@ -253,6 +257,11 @@ func main() {
 			return true
 		}
 
+		err = mzip.ZipAppend(zw, &zr.Reader, f)
+		if err != nil {
+			panic(err)
+		}
+
 		for k, v := range fs {
 			f, err := os.Open(v)
 			if err != nil {
@@ -280,11 +289,6 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-		}
-
-		err = mzip.ZipAppend(zw, &zr.Reader, f)
-		if err != nil {
-			panic(err)
 		}
 
 	case "copy":

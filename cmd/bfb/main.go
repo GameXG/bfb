@@ -200,6 +200,22 @@ func main() {
 			if err != nil {
 				panic(fmt.Errorf("格式化 dstDir 失败，%v", err))
 			}
+
+			nfs := make(map[string]string)
+			for i, v := range fs {
+				ni, err := T(i).Format(v)
+				if err != nil {
+					panic(fmt.Errorf("格式化 %v 失败，%v", i, err))
+				}
+
+				nv, err := T(v).Format(v)
+				if err != nil {
+					panic(fmt.Errorf("格式化 %v 失败，%v", v, err))
+				}
+
+				nfs[ni] = nv
+			}
+			fs = nfs
 		}
 
 		zr, err := zip.OpenReader(*srcZip)
@@ -295,12 +311,12 @@ func main() {
 			for i, src := range srcs {
 				srcs[i], err = T(src).Format(v)
 				if err != nil {
-					panic(fmt.Errorf("格式化 src %v 失败，%v",src, err))
+					panic(fmt.Errorf("格式化 src %v 失败，%v", src, err))
 				}
 			}
 			*dst, err = T(*dst).Format(v)
 			if err != nil {
-				panic(fmt.Errorf("格式化 dst %v 失败，%v",*dst, err))
+				panic(fmt.Errorf("格式化 dst %v 失败，%v", *dst, err))
 			}
 		}
 

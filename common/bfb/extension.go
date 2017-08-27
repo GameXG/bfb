@@ -134,7 +134,7 @@ func copyDir(dstDir string, srcDir string) error {
 // 根据 Manifest 的内容在指定目录创建
 // dstDir 可以使用 text/template 语法引用 Manidest 内容
 // compiler 是否启用混淆，混淆会将所有 BackgroundScripts 文件合并为一个文件，所有 Content_scriptsJs 文件合并为一个文件。
-func BuildExtension(manifestPath, extensionDir, dstDir string, browser BrowserType, isCompile bool, compilationLevel string, warningLevel string, backgroudSkipCompile, contentscriptsSkipCompile []string) error {
+func BuildExtension(manifestPath, extensionDir, dstDir string, browser BrowserType, isCompile bool, compilationLevel string, warningLevel string, backgroudSkipCompile, contentscriptsSkipCompile []string,externs []string) error {
 	m := Manifest{}
 	err := m.LoadFile(manifestPath)
 	if err != nil {
@@ -177,7 +177,7 @@ func BuildExtension(manifestPath, extensionDir, dstDir string, browser BrowserTy
 			compilerJsFun := func(i int) error {
 				if len(compilerJss) > 0 {
 					newJsName := fmt.Sprintf("%v%x.js", fileNamePrefix, i)
-					err = compiler.Compile(compilerJss, filepath.Join(dstDir, newJsName), warningLevel, compilationLevel)
+					err = compiler.Compile(compilerJss, filepath.Join(dstDir, newJsName), warningLevel, compilationLevel,externs)
 					if err != nil {
 						return fmt.Errorf("编译js失败，%v", err)
 					}

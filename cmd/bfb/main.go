@@ -104,9 +104,11 @@ func main() {
 
 		var backgroudSkipCompile Strings
 		var contentscriptsSkipCompile Strings
+		var externs Strings
 
 		flag.Var(&backgroudSkipCompile, "backgroudSkipCompile", "backgroud 不编译的脚本")
 		flag.Var(&contentscriptsSkipCompile, "contentscriptsSkipCompile", "contentscripts 不编译的脚本")
+		flag.Var(&externs, "externs", "google compiler externs 参数")
 
 		flag.Parse()
 
@@ -123,7 +125,7 @@ func main() {
 			os.Exit(-1)
 		}
 
-		err := bfb.BuildExtension(*manifestPath, *extensionDir, *dstDir, bt, *isCompile, *compilationLevel, *warningLevel, backgroudSkipCompile, contentscriptsSkipCompile)
+		err := bfb.BuildExtension(*manifestPath, *extensionDir, *dstDir, bt, *isCompile, *compilationLevel, *warningLevel, backgroudSkipCompile, contentscriptsSkipCompile, externs)
 		if err != nil {
 			panic(err)
 		}

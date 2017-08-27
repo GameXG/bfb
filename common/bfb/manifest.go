@@ -46,8 +46,10 @@ func (m *Manifest) Save(w io.Writer, browser BrowserType) error {
 
 	switch browser {
 	case BrowserTypeNone, BrowserTypeFirefox:
+		break
 	case BrowserTypeChrome:
 		mjson.Del(&v, []string{"applications"})
+		break
 	default:
 		return fmt.Errorf("不支持的浏览器格式。")
 	}

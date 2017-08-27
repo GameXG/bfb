@@ -8,7 +8,7 @@ import (
 
 // java -jar compiler.jar  --warning_level=VERBOSE --compilation_level=ADVANCED_OPTIMIZATIONS  --js_output_file=b/content_scripts.js compatible.js debug.js config.js debug.js  page-eater.js
 
-func Compile(files []string, output_file string, warning_level, compilation_level string) error {
+func Compile(files []string, output_file string, warning_level, compilation_level string, externs []string) error {
 	args := []string{"-jar", "compiler.jar"}
 	if len(warning_level) != 0 {
 		args = append(args, fmt.Sprint("--warning_level=", warning_level))
@@ -21,6 +21,12 @@ func Compile(files []string, output_file string, warning_level, compilation_leve
 	args = append(args, fmt.Sprint("--js_output_file=", output_file))
 
 	args = append(args, files...)
+
+	for _, v := range externs {
+		args = append(args, `--externs`)
+		args = append(args, v)
+	}
+	//fmt.Printf("args:%#v", args)
 
 	cmd := exec.Command("java", args...)
 	cmd.Stderr = os.Stderr

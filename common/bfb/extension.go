@@ -102,8 +102,7 @@ func copyDir(dstDir string, srcDir string) error {
 	defer src.Close()
 
 	for {
-		//TODO: 更改参数为 100
-		objs, err := src.Readdir(1)
+		objs, err := src.Readdir(100)
 		if err == io.EOF {
 			break
 		}

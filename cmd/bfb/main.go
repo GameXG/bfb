@@ -15,6 +15,7 @@ import (
 	"github.com/gamexg/bfb/common/bfb"
 	"github.com/gamexg/bfb/common/google/chromewebstore"
 	"github.com/gamexg/bfb/common/google/oauth2"
+	"github.com/gamexg/bfb/common/jjencode"
 	"github.com/gamexg/bfb/common/mjson"
 	. "github.com/gamexg/bfb/common/mstring"
 	"github.com/gamexg/bfb/common/mzip"
@@ -389,6 +390,43 @@ func main() {
 				}
 			}
 
+		}
+
+	case "jjencode":
+		// zip 内文件替换功能
+
+		j := flag.String("json", "", "dir 命名参数文件")
+		src := flag.String("src", "", "注意，只会处理 js 文件")
+		dst := flag.String("dst", "", "")
+		gv := flag.String("gv", "%", "js全局变量名")
+		recursive := flag.Bool("recursive", true, "是否递归子目录")
+
+		flag.Parse()
+
+		if len(*src) == 0 || len(*dst) == 0 {
+			panic(fmt.Errorf("src 、 dst 不能为空。"))
+		}
+
+		if len(*j) != 0 {
+			var v interface{}
+			err := mjson.LoadFile(&v, *j)
+			if err != nil {
+				panic(fmt.Errorf("json LoadFile %v 失败，%v", j, err))
+			}
+
+			*src, err = T(*src).Format(v)
+			if err != nil {
+				panic(fmt.Errorf("格式化 src 失败，%v", err))
+			}
+			*dst, err = T(*dst).Format(v)
+			if err != nil {
+				panic(fmt.Errorf("格式化 dst 失败，%v", err))
+			}
+		}
+
+		err := jjencode.JjencodeFile(*gv, *src, *dst, *recursive)
+		if err != nil {
+			panic(err)
 		}
 
 	case "codeUrl":
